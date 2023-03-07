@@ -1,0 +1,94 @@
+........Javacript And DOM ..............
+/////////////////////////////////////////
+   const productContainer =  document.getElementById("Product-container");
+   const searchInput = document.getElementById("search");
+   let product = [];
+
+   function handleSearch(target){
+    const search = target.value.toLowerCase();
+    const searchMatch = product.filter((element)=> {
+           const name = element.name.toLowerCase();
+           return name.includes(search);
+   });
+console.log(searchMatch.length);
+renderCards(searchMatch)
+
+  }
+
+async function fetchData(){
+    const response = await fetch("https://makeup-api.herokuapp.com/api/v1/products.json");
+    const data = await response.json();
+    if(data.length > 0){
+        product = [...data];
+        renderCards(product);
+    }
+}
+fetchData();
+
+
+function renderCards(data = []){
+let cards = [];
+for(let i = 0;i < data.length;i++){
+    cards.push(createCard(data[i]));
+}
+productContainer.append(...cards);
+}
+
+
+function createCard(data = {}){
+    let card = document.createElement('div');
+    let brandofProduct = document.createElement('h1');
+    let brandName = document.createElement('h2')
+    let brandPrice = document.createElement('h2')
+    let productLink = document.createElement('h2')
+    let descriptionProduct = document.createElement('h2')
+    
+    card.setAttribute("class","card");
+    const {brand ="",name ="",price="",product_link="",description=""} = data;
+    
+    brandofProduct.innerText = brand;
+    brandName.innerText = name;
+    brandPrice.innerText = price;
+    productLink.innerText = product_link;
+    descriptionProduct.innerText = description;
+
+
+     card.append(brandofProduct,brandName,brandPrice,productLink,descriptionProduct)
+    return card;
+}
+
+
+HTML
+////////////////////////
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Api</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .Product-container{
+            display: flex;
+            flex-wrap: wrap;
+
+        }
+       .card{
+        width: 150px;
+        min-height: 100px;
+        background: aqua;
+        border-radius: 10px;
+        margin: 10px;
+       }
+    </style>
+</head>
+<body>
+     <input id="search" onkeyup="handleSearch(this);"> 
+     <div class="Product-container" id="Product-container"></div> 
+    <h1 class="heading">Fetch Api</h1>
+
+    <script src="./script.js"></script>
+</body>
+</html>
